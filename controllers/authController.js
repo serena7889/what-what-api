@@ -53,6 +53,7 @@ exports.studentSignUp = catchAsync(async (req, res, next) => {
 })
 
 exports.logIn = catchAsync(async (req, res, next) => {
+
   const { email, password } = req.body;
 
   // 1) Check email and password exist
@@ -60,9 +61,12 @@ exports.logIn = catchAsync(async (req, res, next) => {
 
   // 2) Check user exists and password is correct
   // User same error for both to not give attackers info
+
+  console.log(`Email: ${email}, Password: ${password}`);
   const emailOrPasswordError = new AppError(401, 'Incorrect email or password')
-  const user = await User.findOne({ $email: email }).select('+password');
-  if (!user) return next(emailOrPasswordError);
+  const user = await User.findOne({ email: email }).select('+password');
+  console.log(`USER FOUND: ${user.email ?? 'none'}`);
+  if (!user || user.email != email) return next(emailOrPasswordError);
   const passwordCorrect = await user.correctPassword(password, user.password);
   if (!passwordCorrect) return next(emailOrPasswordError);
   
@@ -99,9 +103,10 @@ exports.getUserFromToken = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Check token is present
   let token;
+  console.log(req.headers);
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     token = req.headers.authorization.split(' ')[1];
-  }
+  };
   console.log(`Token: ${token}`);
 
   // 2) Verify token

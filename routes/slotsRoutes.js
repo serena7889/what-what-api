@@ -12,6 +12,7 @@ router
 router
   .route('/:slotId')
   .get(authController.protect, authController.restrictTo('admin', 'leader'), slotsController.getSlot)
+  .delete(authController.protect, authController.restrictTo('admin'), slotsController.removeSlot)
 
 router
   .route('/:slotId/assigned')

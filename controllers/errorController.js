@@ -1,6 +1,7 @@
 const AppError = require("../utils/appError");
 
 const sendErrorDev = (res, err) => {
+  console.log(err);
   res.status(err.statusCode).json({
     status: err.status,
     message: err.message,
@@ -10,6 +11,7 @@ const sendErrorDev = (res, err) => {
 )};
 
 const sendErrorProd = (res, err) => {
+  console.log(err);
   if (err.isOperational) { // Error has message from developer
     res.status(err.statusCode).json({
       status: err.status,

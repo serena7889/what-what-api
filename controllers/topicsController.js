@@ -15,9 +15,7 @@ exports.getTopics = catchAsync(async (req, res, next) => {
     res.status(200).json({
       status: 'success',
       results: topics.length,
-      data: {
-        topics: topics
-      },
+      data: topics,
     });
 })
 

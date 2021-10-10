@@ -23,6 +23,7 @@ exports.getSlot = catchAsync(async (req, res, next) => {
 
 exports.createSlot = catchAsync(async (req, res, next) => {
   const slot = await Slot.create({ 'date': req.body.date });
+  console.log(`SLOT: ${req.body.date}`)
   res.status(200).json({
     'status': 'success',
     'data': slot
@@ -45,5 +46,12 @@ exports.removeQuestionAndLeaderFromSlot = catchAsync(async (req, res, next) => {
   res.status(200).json({
     'status': 'success',
     'data': slot
+  })
+})
+
+exports.removeSlot = catchAsync(async (req, res, next) => {
+  const slot = await Slot.findByIdAndRemove(req.params.slotId);
+  res.status(200).json({
+    'status': 'success'
   })
 })

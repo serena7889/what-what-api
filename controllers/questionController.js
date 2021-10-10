@@ -5,7 +5,7 @@ const Slot = require('./../models/slotModel');
 const Topic = require('./../models/topicModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const AppError = require('../utils/appError');
-const User = require('../models/userModel');
+// const User = require('../models/userModel');
 
 // HELPERS
 
