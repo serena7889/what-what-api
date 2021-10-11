@@ -11,6 +11,10 @@ const router = express.Router();
     .post(authController.protect, authController.restrictTo('admin'), questionController.createNewParentQuestion);
 
   router
+    .route('/reset')
+    .delete(authController.protect, authController.restrictTo('admin'), questionController.reset);
+
+  router
     .route('/parent/:parentId/child/:childId')
     .put(authController.protect, authController.restrictTo('admin'), questionController.addChildToParentQuestion);
 

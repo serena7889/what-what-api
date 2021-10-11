@@ -24,6 +24,16 @@ const getFilteredChildQuestions = async (status, req, res, next) => {
     });
 }
 
+exports.reset = catchAsync(async (req, res, next) => {
+  await ChildQuestion.deleteMany();
+  await Slot.deleteMany();
+  await ParentQuestion.deleteMany();
+  await Topic.deleteMany();
+  res.status(200).json({
+    'status': 'success'  
+  });
+})
+
 // ROUTE HANDLERS
 
 exports.getScheduledQuestions = catchAsync(async (req, res, next) => {
