@@ -5,7 +5,25 @@ const AppError = require('../utils/appError');
 const Slot = require('../models/slotModel');
 
 exports.getSlots = catchAsync(async (req, res, next) => {
-  const slots = await Slot.find();
+  const slots = await Slot.find()
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  res.status(200).json({
+    'status': 'success',
+    'data': slots,
+    'results': slots.length
+  });
+})
+
+exports.getAvailableSlots = catchAsync(async (req, res, next) => {
+  const slots = await Slot.find({ $and: [
+    { 'date': { '$gt': Date.now() } },
+    { question: null }
+  ]});
+    
   res.status(200).json({
     'status': 'success',
     'data': slots,
