@@ -5,11 +5,7 @@ const AppError = require('../utils/appError');
 const Slot = require('../models/slotModel');
 
 exports.getSlots = catchAsync(async (req, res, next) => {
-  const slots = await Slot.find()
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+  const slots = await Slot.find();
 
   res.status(200).json({
     'status': 'success',
@@ -50,6 +46,7 @@ exports.createSlot = catchAsync(async (req, res, next) => {
 
 exports.assignQuestionAndLeaderToSlot = catchAsync(async (req, res, next) => {
   const { leaderId, questionId } = req.body;
+  console.log(req.body);
   if (!leaderId || !questionId) return next(new AppError(400, 'Leader or question id not provided'));
   const updatedSlot = await Slot.findByIdAndUpdate(req.params.slotId, { 'leader': leaderId, 'question': questionId, 'scheduled': true }, { new: true });
   if (!updatedSlot) return next(new AppError(400, 'Slot not found for id or update failed'));
