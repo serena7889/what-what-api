@@ -7,6 +7,7 @@ const questionsRouter = require('./routes/questionsRoutes');
 const slotsRouter = require('./routes/slotsRoutes');
 const topicsRouter = require('./routes/topicsRoutes');
 const usersRouter = require('./routes/usersRoutes');
+const settingsRouter = require('./routes/settingsRoutes');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use('/api/v1/questions', questionsRouter);
 app.use('/api/v1/slots', slotsRouter);
 app.use('/api/v1/topics', topicsRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/settings', settingsRouter);
 
 // Custom 404 response when route not matched
 app.all('*', (req, res, next) => {
