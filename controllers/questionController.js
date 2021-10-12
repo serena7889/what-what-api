@@ -55,7 +55,23 @@ exports.getAnsweredQuestions = catchAsync(async (req, res, next) => {
 })
 
 exports.getAvailableQuestions = catchAsync(async (req, res, next) => {
-  const availableQuestions = await ParentQuestion.find({ 'scheduled': false });
+  const availableQuestions = await ParentQuestion.aggregate([
+    {
+      $project: { 
+        "text": 1, 
+        "topics": 1, 
+        "scheduled": 1, 
+        "children": 1, 
+        "children_count": { $size: "$children" } 
+      }
+    },
+    { 
+      $match: { "scheduled": false } 
+    },
+    {
+      $sort: { "children_count": -1 }
+    }
+  ]);
   res.status(200).json({
     'status': 'success',
     'results': availableQuestions.length,
@@ -116,6 +132,7 @@ exports.createNewParentQuestion = catchAsync(async (req, res, next) => {
 })
 
 exports.addChildToParentQuestion = catchAsync(async (req, res, next) => {
+  const updatedQuestion = req.params.updatedQuestion;
   const childId = req.params.childId;
   const parentId = req.params.parentId;
   const childQuestion = await ChildQuestion.findById(childId);
@@ -125,6 +142,9 @@ exports.addChildToParentQuestion = catchAsync(async (req, res, next) => {
   childQuestion.status = 'approved';
   await childQuestion.save();
   parentQuestion.children.push(childId);
+  if (updatedQuestion != null) {
+    parentQuestion.question = updatedQuestion;
+  }
   await parentQuestion.save();
   res.status(200).json({
     'status': 'success',

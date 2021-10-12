@@ -20,10 +20,12 @@ const parentQuestionSchema = new mongoose.Schema({
   scheduled: {
     type: Boolean,
     default: false
-  }
+  },
+  childrenCount: Number
 });
 
 parentQuestionSchema.pre('find', function (next) {
+  this.childrenCount = this.children.length;
   this.populate({
     path: 'children'
   });
