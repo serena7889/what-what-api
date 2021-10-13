@@ -20,7 +20,7 @@ const router = express.Router();
 
   router
     .route('/scheduled')
-    .get(authController.protect, authController.restrictTo('admin', 'leader'), questionController.getScheduledQuestions);
+    .get(authController.protect, questionController.getScheduledQuestions);
   
   router
     .route('/available')

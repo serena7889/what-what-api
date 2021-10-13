@@ -37,7 +37,15 @@ exports.reset = catchAsync(async (req, res, next) => {
 // ROUTE HANDLERS
 
 exports.getScheduledQuestions = catchAsync(async (req, res, next) => {
-  let futureSlots = await Slot.find({ 'date': { '$gt': Date.now() } }).sort('date');
+  let futureSlots = [];
+  if (req.user.role == 'leader' || req.user.role == 'admin') {
+    futureSlots = await Slot.find({ 'date': { '$gt': Date.now() } }).sort('date');
+  } else {
+    futureSlots = await Slot.find({'$and': [
+      { 'date': { '$gt': Date.now() } },
+      { 'question': { $ne: null } }
+    ]}).sort('date');
+  }
   res.status(200).json({
     'status': 'success',
     'data': futureSlots,

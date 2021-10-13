@@ -21,11 +21,9 @@ const parentQuestionSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  childrenCount: Number
 });
 
 parentQuestionSchema.pre('find', function (next) {
-  this.childrenCount = this.children.length;
   this.populate({
     path: 'children'
   });
