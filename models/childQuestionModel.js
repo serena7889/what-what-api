@@ -17,7 +17,19 @@ const childQuestionSchema = new mongoose.Schema({
     enum: ['unapproved', 'approved', 'rejected'],
     required: [true, 'Question status required'],
     default: 'unapproved'
-  }
+  },
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: [true, 'Group required'],
+  },
+});
+
+childQuestionSchema.pre('find', function (next) {
+  this.populate({
+    path: 'group',
+  });
+  next();
 });
 
 const ChildQuestion = mongoose.model('ChildQuestion', childQuestionSchema);

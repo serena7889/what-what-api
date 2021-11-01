@@ -5,12 +5,14 @@ const Slot = require('./../models/slotModel');
 const Topic = require('./../models/topicModel');
 const APIFeatures = require('./../utils/apiFeatures');
 const AppError = require('../utils/appError');
+const { isValidObjectId } = require('mongoose');
+var ObjectId = require('mongodb').ObjectId;
 // const User = require('../models/userModel');
 
 // HELPERS
 
 const getFilteredChildQuestions = async (status, req, res, next) => {
-  const features = await new APIFeatures(ChildQuestion.find({ 'status': status }), req.query)
+  const features = await new APIFeatures(ChildQuestion.find({ 'status': status, 'group': req.query.group }), req.query)
       .filter()
       .sort()
       .limitFields()
@@ -39,12 +41,9 @@ exports.reset = catchAsync(async (req, res, next) => {
 exports.getScheduledQuestions = catchAsync(async (req, res, next) => {
   let futureSlots = [];
   if (req.user.role == 'leader' || req.user.role == 'admin') {
-    futureSlots = await Slot.find({ 'date': { '$gt': Date.now() } }).sort('date');
+    futureSlots = await Slot.find({ 'date': { '$gt': Date.now() }, 'group': req.query.group }).sort('date');
   } else {
-    futureSlots = await Slot.find({'$and': [
-      { 'date': { '$gt': Date.now() } },
-      { 'question': { $ne: null } }
-    ]}).sort('date');
+    futureSlots = await Slot.find({'date': { '$gt': Date.now() }, 'question': { $ne: null } , 'group': req.query.group }).sort('date');
   }
   res.status(200).json({
     'status': 'success',
@@ -54,7 +53,7 @@ exports.getScheduledQuestions = catchAsync(async (req, res, next) => {
 })
 
 exports.getAnsweredQuestions = catchAsync(async (req, res, next) => {
-  let pastSlots = await Slot.find({ 'date': { '$lt': Date.now() } }).where({ 'question': { '$ne': null } });
+  let pastSlots = await Slot.find({ 'date': { '$lt': Date.now() }, 'question': { '$ne': null }, 'group': req.query.group });
   res.status(200).json({
     'status': 'success',
     'data': pastSlots,
@@ -70,11 +69,15 @@ exports.getAvailableQuestions = catchAsync(async (req, res, next) => {
         "topics": 1, 
         "scheduled": 1, 
         "children": 1, 
+        "group": 1,
         "children_count": { $size: "$children" } 
       }
     },
     { 
-      $match: { "scheduled": false } 
+      $match: { $and: [
+        {"scheduled": false}, 
+        {'group': new ObjectId(req.query.group) }
+      ]} 
     },
     {
       $sort: { "children_count": -1 }

@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema({
       message: 'Passwords must match'
     }
   },
+  groups: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'Group',
+    default: [],
+  },
   role: {
     type: String,
     enum: ['student', 'leader', 'admin'],

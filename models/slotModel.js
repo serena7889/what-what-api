@@ -13,7 +13,12 @@ const slotSchema = new mongoose.Schema({
   question: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'ParentQuestion'
-  }
+  },
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: [true, 'Group required'],
+  },
 });
 
 slotSchema.pre('find', function(next) {
@@ -23,7 +28,9 @@ slotSchema.pre('find', function(next) {
   this.populate({
     path: 'leader',
   });
-
+  this.populate({
+    path: 'group',
+  });
   next();
 })
 

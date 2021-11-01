@@ -17,6 +17,11 @@ const parentQuestionSchema = new mongoose.Schema({
     ref: 'Topic',
     default: []
   },
+  group: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: [true, 'Group required'],
+  },
   scheduled: {
     type: Boolean,
     default: false
@@ -29,6 +34,9 @@ parentQuestionSchema.pre('find', function (next) {
   });
   this.populate({
     path: 'topics'
+  });
+  this.populate({
+    path: 'group',
   });
   next();
 });

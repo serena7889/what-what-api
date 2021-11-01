@@ -41,6 +41,8 @@ const handleJSONWebTokenError = () => new AppError(401, 'Invalid token. Please l
 
 const handleJWTExpiredError = () => new AppError(401, 'Your token has expired. Please log in again.');
 
+const handleTypeError = () => new AppError(500, 'Invalid type found.');
+
 const handleDuplicateFieldsDB = err => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0]; // Matches duplicate key in quotations in error message
   const message = `Duplicate field value: ${value}`;
@@ -60,6 +62,7 @@ module.exports = (err, req, res, next) => {
     if (error.name === 'ValidationError') err = handleValidationErrorDB(error);
     if (error.name === 'JsonWebTokenError') err = handleJSONWebTokenError();
     if (error.name === 'TokenExpiredError') err = handleJWTExpiredError();
+    if (error.name === 'TypeError') err = handleTypeError();
     sendErrorProd(res, err);
   }
 };
